@@ -4,6 +4,28 @@
 
 The owner confirms that the app audit and UX fixes are deployed at https://slate-workspace.vercel.app/, deployed after commit `dffa071`. This confirms deployment only, not acceptance results.
 
+## Codex-executed live E2E results
+
+Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `82ba6c8` deployed. Run started **2026-10-18T20:51:01.105Z (UTC)** and took **189.028 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium**.
+
+Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-focus-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
+
+| Executed scenario | Result |
+| --- | --- |
+| 01 Fresh signed-out context: 240 credits and Generate 12 credits | PASS |
+| 02 Generate a take within 40 seconds | PASS |
+| 03 Forced failure: visible reason, refund and linked Retry | PASS |
+| 04 Refresh persistence and interrupted-job recovery | PASS |
+| 05 Spend to zero, disabled reason, confirmed credit reset and retained takes | PASS |
+| 06 Remix prefill and readable parent navigation | PASS |
+| 07 Synchronized Compare and persisted Keeper | PASS |
+| 08 Dialog centering, Tab/Shift+Tab containment, Esc and focus return | PASS |
+| 09 Automated 390px viewport: no horizontal overflow, labels >=11px, targets >=44px | PASS |
+| 10 Blocked IndexedDB: Session only warning and creation | PASS |
+| 11 MediaRecorder unavailable: preview works, Download hidden | PASS |
+
+Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. **Lighthouse accessibility score and >=90 threshold remain UNVERIFIED**: the attempted Lighthouse command failed to launch Chrome and produced no report or score.
+
 ## Current manual browser results
 
 No completed manual browser result list was supplied. Bracketed example outcomes were placeholders and are not treated as PASS, FAIL or not-tested results. All unconfirmed checks remain UNVERIFIED.
@@ -33,10 +55,10 @@ No completed manual browser result list was supplied. Bracketed example outcomes
 | Take-dialog Esc closure | UNVERIFIED |
 | Take-dialog focus containment and return | UNVERIFIED |
 | Keyboard navigation, visible focus and reduced motion | UNVERIFIED |
-| Lighthouse accessibility run status | UNVERIFIED — no run status supplied |
+| Lighthouse accessibility run status | UNVERIFIED — attempted run failed to launch Chrome |
 | Lighthouse accessibility score on Create | UNVERIFIED — no score supplied |
 
-No Lighthouse score or threshold pass is claimed. Previous automated or browser records do not establish owner-confirmed acceptance of the deployment after `dffa071`. No app tests, build or browser checks were rerun for this documentation-only update.
+No Lighthouse score or threshold pass is claimed. Previous automated or browser records do not establish owner-confirmed acceptance of the deployment after `dffa071`. That earlier documentation-only update did not rerun checks; the fresh Codex-executed live E2E run is recorded above.
 
 ## SPEC section 8: owner-confirmed current acceptance
 

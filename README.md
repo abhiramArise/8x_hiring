@@ -60,6 +60,28 @@ Codex desktop assisted implementation, debugging, styling and focused tests. `.a
 
 **Earlier build chats, and the audit and UX-fix Codex sessions after the canary sessions, ran outside this repository and were not captured by its hooks.** The existing canaries verify those sessions, not the complete build history. No missing transcript has been backfilled. During this audit, `.agent-logs/` and `.codex/` were read only and left unchanged. Raw quoted canary evidence in `CAPTURE-TEST.md` matched the actual files.
 
+## Codex-executed live E2E results
+
+Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `82ba6c8` deployed. Run started **2026-10-18T20:51:01.105Z (UTC)** and took **189.028 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium**.
+
+Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-focus-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
+
+| Executed scenario | Result |
+| --- | --- |
+| 01 Fresh signed-out context: 240 credits and Generate 12 credits | PASS |
+| 02 Generate a take within 40 seconds | PASS |
+| 03 Forced failure: visible reason, refund and linked Retry | PASS |
+| 04 Refresh persistence and interrupted-job recovery | PASS |
+| 05 Spend to zero, disabled reason, confirmed credit reset and retained takes | PASS |
+| 06 Remix prefill and readable parent navigation | PASS |
+| 07 Synchronized Compare and persisted Keeper | PASS |
+| 08 Dialog centering, Tab/Shift+Tab containment, Esc and focus return | PASS |
+| 09 Automated 390px viewport: no horizontal overflow, labels >=11px, targets >=44px | PASS |
+| 10 Blocked IndexedDB: Session only warning and creation | PASS |
+| 11 MediaRecorder unavailable: preview works, Download hidden | PASS |
+
+Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. **Lighthouse accessibility score and >=90 threshold remain UNVERIFIED**: the attempted Lighthouse command failed to launch Chrome and produced no report or score.
+
 ## Verification and known issues
 
 The app audit and UX fixes are deployed at https://slate-workspace.vercel.app/, deployed after commit `dffa071` (owner confirmation). Deployment confirmation does not establish browser acceptance results.
@@ -83,7 +105,7 @@ No current manual browser results were supplied for the deployment after `dffa07
 | Unavailable-storage loading/error path | UNVERIFIED |
 | WebM download and unsupported-recording fallback | UNVERIFIED |
 | Keyboard navigation and reduced motion | UNVERIFIED |
-| Lighthouse accessibility run status and Create score | UNVERIFIED — no run status or score supplied |
+| Lighthouse accessibility run status and Create score | UNVERIFIED — Chrome launch failed; no report or score obtained |
 
 - Browser storage is per origin, browser and device. There is no account sync or multi-tab coordination. Budget is a local demonstration, not billing enforcement.
 - The reference image is not used by the mock, and mock output is a landscape rather than semantic video generation.
