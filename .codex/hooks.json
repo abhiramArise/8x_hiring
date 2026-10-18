@@ -1,0 +1,6 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{"type":"command","command":"C:/Users/DELL/anaconda3/python.exe D:/Games/8x_hiring/.codex/capture.py UserPromptSubmit","timeout":10,"statusMessage":"Capturing prompt"}]}],
+    "Stop": [{"hooks": [{"type":"command","command":"C:/Users/DELL/anaconda3/python.exe D:/Games/8x_hiring/.codex/capture.py Stop","timeout":10,"statusMessage":"Capturing final response"}]}]
+  }
+}
