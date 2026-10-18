@@ -66,10 +66,25 @@ The app audit and UX fixes are deployed at https://slate-workspace.vercel.app/, 
 
 `docs/AUDIT.md` records the audit and `docs/VERIFICATION.md` records exact check coverage. Automated checks cover costs, independent state transitions, failure refunds, linked retry, storage rejection/timeout and interrupted recovery. These checks do not substitute for browser tests.
 
-- Local Next production startup reports Ready, but this sandbox's browser cannot reach its localhost port. Updated UI behavior is not browser-verified here.
-- Earlier live checks verified generation, WebM export, queue/gallery refresh, remix parent, equal-duration compare, Keeper, mobile width, cancellation and budget exhaustion. These apply to the earlier deployment.
-- A literal signed-out private-window generation, failed-job retry in the browser, unavailable-storage UI, unsupported-recording UI, mixed-duration comparison and a complete keyboard/reduced-motion pass remain unverified for the updated build.
-- Lighthouse could not launch Chrome in this sandbox; an accessibility score of 90 or higher is not claimed.
+No current manual browser results were supplied for the deployment after `dffa071`. Prior test records do not establish acceptance of this deployment.
+
+| Current manual check | Status |
+| --- | --- |
+| Signed-out/private-window generation | UNVERIFIED |
+| Exact costs, breakdown and insufficient-credit reason | UNVERIFIED |
+| Reset demo credits: confirmation, retained takes and persistence | UNVERIFIED |
+| Parent take navigation and missing-parent handling | UNVERIFIED |
+| Take dialog: Esc, focus return, focus containment and centering | UNVERIFIED |
+| Mobile Create at 390px | UNVERIFIED |
+| Independent jobs, failed-job reason/retry and interruption recovery | UNVERIFIED |
+| Queue/gallery refresh persistence and Remix | UNVERIFIED |
+| Compare synchronization and Keeper persistence | UNVERIFIED |
+| Budget charge/refund behavior | UNVERIFIED |
+| Unavailable-storage loading/error path | UNVERIFIED |
+| WebM download and unsupported-recording fallback | UNVERIFIED |
+| Keyboard navigation and reduced motion | UNVERIFIED |
+| Lighthouse accessibility run status and Create score | UNVERIFIED — no run status or score supplied |
+
 - Browser storage is per origin, browser and device. There is no account sync or multi-tab coordination. Budget is a local demonstration, not billing enforcement.
 - The reference image is not used by the mock, and mock output is a landscape rather than semantic video generation.
 - Historical capture gaps remain. Recon screenshots, walkthrough video and intro video are each **UNVERIFIED**: no current completion confirmation or video links were supplied.
