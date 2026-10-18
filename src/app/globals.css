@@ -953,7 +953,7 @@ dialog::backdrop {
     flex-direction: column;
     align-items: stretch;
   }
-  .generate-row > div {
+  .generate-row > .generate-context {
     display: none;
   }
   .preset-grid {
@@ -1178,3 +1178,8 @@ dialog::backdrop {
   background: #292319;
   line-height: 1.6;
 }
+
+.cost-breakdown { margin-top: 12px; color: #c1c4c9; font-size: 12px; line-height: 1.6; text-align: right; }
+.credit-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 16px; margin-top: 8px; }
+.credit-tools .error { margin: 0; }
+.credit-tools button { min-height: 44px; text-decoration: underline; text-underline-offset: 3px; font-size: 12px; }

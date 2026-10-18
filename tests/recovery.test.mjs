@@ -75,3 +75,18 @@ test("retry makes a new linked attempt and failure status is independent", () =>
     "failed",
   );
 });
+
+test('demo reset exempts existing takes without changing their costs or history', () => {
+  const jobs = [
+    { id: 'kept', status: 'done', costCredits: 160, isKeeper: true },
+    { id: 'running', status: 'generating', costCredits: 80 },
+  ];
+  const before = structuredClone(jobs);
+  assert.equal(core.availableCredits(240, jobs), 0);
+  const resetIds = jobs.map((job) => job.id);
+  assert.equal(core.availableCredits(240, jobs, resetIds), 240);
+  assert.deepEqual(jobs, before);
+  const later = [...jobs, {id:'new',status:'done',costCredits:12}];
+  assert.equal(core.availableCredits(240, later, resetIds), 228);
+  assert.equal(core.availableCredits(240, [{...jobs[1],status:'failed'}], resetIds), 240);
+});

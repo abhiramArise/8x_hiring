@@ -85,12 +85,13 @@ export function estimateCost(
 }
 export function availableCredits(
   total: number,
-  jobs: { status: string; costCredits: number }[],
+  jobs: { id?: string; status: string; costCredits: number }[],
+  exemptIds: readonly string[] = [],
 ) {
   return (
     total -
     jobs
-      .filter((j) => ["done", "queued", "generating"].includes(j.status))
+      .filter((j) => !exemptIds.includes(j.id ?? "") && ["done", "queued", "generating"].includes(j.status))
       .reduce((s, j) => s + j.costCredits, 0)
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { get, set } from "idb-keyval";
+import { get, set, getMany, setMany } from "idb-keyval";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -120,16 +120,17 @@ export default function Home() {
     [exporting, setExporting] = useState(false),
     [canRecord, setCanRecord] = useState(false),
     [saving, setSaving] = useState(false),
-    [storageError, setStorageError] = useState("");
+    [storageError, setStorageError] = useState(""),
+    [budgetExemptIds, setBudgetExemptIds] = useState<string[]>([]);
   const file = useRef<HTMLInputElement>(null),
     promptRef = useRef<HTMLTextAreaElement>(null),
     dialogRef = useRef<HTMLDialogElement>(null),
     storageAvailable = useRef(false),
     saveQueue = useRef<Promise<void>>(Promise.resolve());
   const total = 240,
-    remaining = availableCredits(total, jobs),
+    remaining = availableCredits(total, jobs, budgetExemptIds),
     spent = jobs
-      .filter((j) => j.status === "done")
+      .filter((j) => j.status === "done" && !budgetExemptIds.includes(j.id))
       .reduce((s, j) => s + j.costCredits, 0),
     cost = estimateCost(recipe.modelId, recipe.durationSec, recipe.resolution),
     active = jobs.filter((j) => ["queued", "generating"].includes(j.status)),
@@ -137,11 +138,13 @@ export default function Home() {
   useEffect(() => {
     let disposed = false;
     setCanRecord(!!recordingType());
-    withStorageTimeout(() => get<unknown>("slate-jobs"))
-      .then((data) => {
+    withStorageTimeout(() => getMany<unknown>(["slate-jobs", "slate-budget-exemptions"]))
+      .then(([data, exemptions]) => {
         const restored = restoreJobs(data);
+        if (exemptions !== undefined && (!Array.isArray(exemptions) || !exemptions.every((id) => typeof id === "string"))) throw new Error("Unreadable demo budget");
         if (disposed) return;
         setJobs(restored);
+        setBudgetExemptIds((exemptions as string[] | undefined) ?? []);
         storageAvailable.current = true;
       })
       .catch(() => {
@@ -165,7 +168,7 @@ export default function Home() {
       .then(async () => {
         if (!storageAvailable.current) return;
         try {
-          await withStorageTimeout(() => set("slate-jobs", jobs));
+          await withStorageTimeout(() => setMany([["slate-jobs", jobs], ["slate-budget-exemptions", budgetExemptIds]]));
         } catch {
           storageAvailable.current = false;
           setStorageError(
@@ -179,7 +182,7 @@ export default function Home() {
     return () => {
       disposed = true;
     };
-  }, [jobs, ready]);
+  }, [jobs, ready, budgetExemptIds]);
   useEffect(() => {
     const timer = setInterval(
       () =>
@@ -257,6 +260,11 @@ export default function Home() {
     setJobs((old) => [job, ...old]);
     setNotice("Your take is queued. You can keep creating.");
     setParent(undefined);
+  }
+  function resetDemoCredits() {
+    if (!ready || !window.confirm("Restore 240 demo credits? All takes stay saved. Existing and running takes will not spend the new credits.")) return;
+    setBudgetExemptIds(jobs.map((job) => job.id));
+    setNotice("Demo budget reset to 240 credits. All takes kept.");
   }
   function remix(j: Generation) {
     setRecipe({ ...j.recipe });
@@ -504,7 +512,7 @@ export default function Home() {
               </label>
             </div>
             <div className="generate-row">
-              <div>
+              <div className="generate-context">
                 <span className="small-muted">
                   {parent
                     ? "REMIXING A PREVIOUS TAKE"
@@ -520,6 +528,7 @@ export default function Home() {
               <button
                 className="primary"
                 onClick={() => generate()}
+                aria-describedby={cost > remaining ? "cost-breakdown credit-reason" : "cost-breakdown"}
                 disabled={!ready || !recipe.prompt.trim() || cost > remaining}
               >
                 {!ready ? (
@@ -531,12 +540,17 @@ export default function Home() {
                 <ArrowUpRight size={16} />
               </button>
             </div>
-            {cost > remaining && (
-              <p className="error" role="status">
-                Not enough credits. Choose a shorter duration or lower-cost
-                model.
-              </p>
-            )}
+            <p className="cost-breakdown" id="cost-breakdown">
+              {models.find((model) => model.id === recipe.modelId)?.rate} cr/s × {recipe.durationSec} s × {recipe.resolution === "1080p" ? "2×" : "1×"} = {cost} credits
+            </p>
+            <div className="credit-tools">
+              {cost > remaining && (
+                <p className="error" id="credit-reason" role="status">
+                  Not enough credits: you have {remaining}, this needs {cost}.
+                </p>
+              )}
+              <button className="subtle" disabled={!ready} onClick={resetDemoCredits}>Reset demo credits</button>
+            </div>
           </div>
           <aside className="camera-panel">
             <div className="section-top">
