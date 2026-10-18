@@ -1,42 +1,40 @@
-# Verification
+# Verification — audit revision, 2026-10-19
 
-Verified 2026-10-19 against https://slate-workspace.vercel.app/.
+## Automated/local checks
 
-Capture: PASS. Two fresh sessions wrote exact prompt/reply pairs automatically; CAPTURE-TEST.md contains raw evidence. Existing logs were not edited. Logs are tracked and excluded from Git line-ending conversion by .gitattributes.
-
-## Product checks
-
-- Three focused cost/state tests passed in the implementation block; production build and type check passed.
-- Dependency audit: zero reported vulnerabilities after the PostCSS override.
-- Independent review: portrait/square canvas dimensions, optional export cache, and named result dialog fixes applied.
-- Vercel production deployment: live. First cloud build compiled but failed because Vercel expected .next. Project output was corrected to .next-production and the same source redeployed successfully. vercel.json records that setting for future deployments.
-- Cookie-free HTTP request: 200, expected Slate heading and Mock render label. A literal private-window check remains outstanding.
-- Live browser: three concurrent Swift jobs completed independently; refreshing during generation retained all three and their reservations.
-- Costs: default Balanced/4s/720p = 12; Cinematic/8s/1080p = 80; Swift/4s/720p = 8, all observed in the live UI.
-- Real WebM download: 1,012,553 bytes, EBML signature 1A-45-DF-A3, exported through the browser download flow.
-- Remix: recipe prefilled; changed camera to Orbit; generated result retained Remixed from 102b87f6.
-- Compare: two selected results opened together; Play in sync changed to Pause; Keeper selection persisted after reload and appeared in Keepers.
-- Budget: reservations deducted immediately, cancellation released 8 credits without a charge; retry queued a replacement. At 240/240 credits used, generation disabled with an insufficient-credit message.
-- Mobile Create: 390 x 844 viewport, document scrollWidth 375 <= innerWidth 390; controls and all ten presets visible without horizontal overflow.
-- Random failure UI: not observed in this run (30 successful results plus one cancelled original). Failure state logic is covered by focused tests, but failed-job retry is not claimed browser-verified.
-- Lighthouse: attempted against the live URL using headless Chrome; Chrome failed to expose its debugging port in this sandbox. No score is claimed.
+- PASS: six focused tests (cost, job transitions, budget failure release, synchronous/rejected/stalled storage, interrupted recovery, linked retry). The two new recovery checks failed before their implementation and passed afterwards.
+- PASS: TypeScript check with --noEmit --incremental false.
+- PASS: production build completed with static Create route and 114 kB initial JavaScript.
+- Local production startup: reported Ready at localhost:3001. Browser access timed out and separate-process HTTP failed; no local interactive pass is claimed.
+- PASS: in-process production HTTP check on Node 24.19.0 returned 200, expected heading, the new result empty state, and no extra logo letter. The same check on Node 25 returned 200 then hit a Windows shutdown assertion; the Node 24 run exited cleanly.
+- Protected files: all nine files in .agent-logs/ and .codex/ retain their baseline SHA-256 hashes, with no additions or removals. CAPTURE-TEST.md is unchanged. Read only. CAPTURE-TEST.md raw excerpts match actual logs; no capture record was created or changed.
 
 ## SPEC section 8
 
-1. Public signed-out generation: live browser generation and cookie-free HTTP pass; literal private-window test remains.
-2. Live costs: PASS for the combinations above, plus focused cost checks.
-3. Three independent jobs: PASS. Cancellation/retry: PASS. Simulated failure/retry: browser verification outstanding.
-4. Refresh persistence: PASS for in-flight queue and completed gallery.
-5. Remix recipe/parent link: PASS.
-6. Synchronized compare and persistent Keeper: PASS for equal-duration clips; mixed durations not manually verified.
-7. Budget: PASS for reservation, cancellation release and exhaustion; failed-job release covered by logic test only.
-8. README: PASS for positioning, kept/changed/cut, provider swap, AI capture scope and known limitations.
-9. Lighthouse >=90: NOT VERIFIED; browser launch failed.
+| # | Status | Evidence and limits |
+| --- | --- | --- |
+| 1 | NOT VERIFIED fully | Earlier live browser generation and cookie-free HTTP 200; no literal private-window generation. Audit fixes not redeployed. |
+| 2 | PASS for cost logic/earlier live UI | Tests verify rate, duration and multiplier. Earlier live UI showed Balanced/4s/720p 12, Swift/4s/720p 8, Cinematic/8s/1080p 80. Current default selects remain explicit. Updated build UI not manually checked. |
+| 3 | NOT VERIFIED fully | Earlier three concurrent jobs/cancel/retry observed. Tests cover failure state and linked retry. Random failure with reason/retry not browser-verified. |
+| 4 | PASS in recovery tests; current UI NOT VERIFIED | Earlier deployed queue/gallery refresh passed. New restore test preserves completed/Keeper jobs and converts active ones to failed interrupted, as requested. |
+| 5 | PASS on earlier deployment | Prefilled recipe and parent 102b87f6 observed; updated parent label not browser-verified. |
+| 6 | PASS for earlier equal-duration comparison | Play in sync and Keeper persistence observed. Mixed durations/current build not manually verified. |
+| 7 | PASS in logic tests | Failure and interruption release reserved credits. Earlier UI cancellation release/exhaustion passed. Random failure refund UI unverified. |
+| 8 | PASS | README covers positioning, decisions/reasons, mock/provider swap, AI capture limitations and known issues. |
+| 9 | NOT VERIFIED | Lighthouse Chrome launch failed in the earlier attempt; no 90+ score is claimed. |
 
-## Remaining submission work
+## Requested UI checks
 
-Run a private-window generation and Lighthouse accessibility audit on a normal local browser. Observe a random failed take and retry it. Record the intro/walkthrough. Reference signup/screenshots were not completed. Historical build-chat capture gaps are disclosed in README; no records were fabricated.
+- Logo: source letter replaced with film icon; browser confirmation pending.
+- Storage unavailable/stalled: bounded logic tested; visual error/session-only transition pending.
+- Empty result: designed fallback present in source; visual check pending.
+- Defaults/multiplier: present and previously observed; unchanged arithmetic.
+- Independent queued/generating/done/failed/cancelled: state tests; previous UI covered all except random failure.
+- Interrupted: new restore test verifies failed reason, refund and terminal preservation.
+- Download: previous live WebM 1,012,553 bytes with EBML signature 1A-45-DF-A3. Unsupported button guard inspected; unsupported browser not exercised.
+- Mobile: previous live 390 x 844 check found scrollWidth 375 <= innerWidth 390. Updated layout not manually verified.
+- Keyboard/focus/reduced motion: labelled native controls, focus-visible CSS and reduced-motion CSS/canvas guards inspected. Complete interactive pass not performed; no accessibility score inferred.
 
-## Build output
+## Manual work remaining
 
-Development artifacts use .next/; production uses .next-production/. Windows startup preloads scripts/windows-path.cjs, retrying asynchronous realpath EPERM through the permitted synchronous API. Other errors propagate and other operating systems are unchanged.
+Deploy this revision. On a normal local browser verify private-window generation, storage disabled/unavailable, interrupted/retry path, unsupported recording, mixed-duration comparison and keyboard/reduced motion. Run Lighthouse accessibility on Create and fix any findings until >=90. Record the required intro and walkthrough. Earlier capture gaps cannot be reconstructed honestly.
