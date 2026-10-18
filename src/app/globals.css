@@ -283,13 +283,10 @@ textarea::placeholder {
   color: #b8b9bd;
   font-size: 11px;
 }
-.subtle span {
-  color: #6f7279;
-  font-size: 10px;
-}
+.subtle span,
 .counter {
-  font-size: 9px;
-  color: #777b80;
+  color: var(--muted);
+  font-size: 11px;
 }
 .divider {
   height: 1px;
