@@ -1168,3 +1168,13 @@ dialog::backdrop {
 .preset-art:has(canvas)::after {
   display: none;
 }
+
+.storage-error {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid #896c42;
+  border-radius: 12px;
+  color: #efd9b4;
+  background: #292319;
+  line-height: 1.6;
+}

@@ -157,3 +157,43 @@ export class MockProvider implements GenerationProvider {
     return { ...job, status: "cancelled", progress: 0 };
   }
 }
+
+export function restoreJobs(data: unknown): Generation[] {
+  if (data === undefined) return [];
+  const statuses = ["queued", "generating", "done", "failed", "cancelled"];
+  if (
+    !Array.isArray(data) ||
+    !data.every(
+      (j) =>
+        j &&
+        typeof j.id === "string" &&
+        Number.isFinite(j.createdAt) &&
+        statuses.includes(j.status) &&
+        Number.isFinite(j.costCredits) &&
+        j.costCredits >= 0 &&
+        Number.isFinite(j.delay) &&
+        typeof j.willFail === "boolean" &&
+        j.recipe &&
+        typeof j.recipe.prompt === "string" &&
+        models.some((m) => m.id === j.recipe.modelId) &&
+        presets.some((p) => p.id === j.recipe.cameraPresetId) &&
+        [4, 6, 8].includes(j.recipe.durationSec) &&
+        ["16:9", "9:16", "1:1"].includes(j.recipe.aspect) &&
+        ["720p", "1080p"].includes(j.recipe.resolution),
+    )
+  )
+    throw new Error(
+      "Your saved takes could not be read. They have not been overwritten.",
+    );
+  return data.map((j: Generation) =>
+    ["queued", "generating"].includes(j.status)
+      ? {
+          ...j,
+          status: "failed" as const,
+          progress: 0,
+          error:
+            "This take was interrupted when the workspace closed. No credits charged. Retry when ready.",
+        }
+      : j,
+  );
+}

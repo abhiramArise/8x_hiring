@@ -27,10 +27,12 @@ import {
   presets,
   estimateCost,
   availableCredits,
+  restoreJobs,
   type Generation,
   type Recipe,
 } from "../lib/core";
 import { draw, record, recordingType } from "../lib/render";
+import { withStorageTimeout } from "../lib/storage";
 const provider = new MockProvider();
 const initial: Recipe = {
   prompt: "",
@@ -117,10 +119,13 @@ export default function Home() {
     [clock, setClock] = useState(0),
     [exporting, setExporting] = useState(false),
     [canRecord, setCanRecord] = useState(false),
-    [saving, setSaving] = useState(false);
+    [saving, setSaving] = useState(false),
+    [storageError, setStorageError] = useState("");
   const file = useRef<HTMLInputElement>(null),
     promptRef = useRef<HTMLTextAreaElement>(null),
-    dialogRef = useRef<HTMLDialogElement>(null);
+    dialogRef = useRef<HTMLDialogElement>(null),
+    storageAvailable = useRef(false),
+    saveQueue = useRef<Promise<void>>(Promise.resolve());
   const total = 240,
     remaining = availableCredits(total, jobs),
     spent = jobs
@@ -130,30 +135,50 @@ export default function Home() {
     active = jobs.filter((j) => ["queued", "generating"].includes(j.status)),
     done = jobs.filter((j) => j.status === "done");
   useEffect(() => {
+    let disposed = false;
     setCanRecord(!!recordingType());
-    get<Generation[]>("slate-jobs")
+    withStorageTimeout(() => get<unknown>("slate-jobs"))
       .then((data) => {
-        if (data) setJobs(data);
-        setReady(true);
+        const restored = restoreJobs(data);
+        if (disposed) return;
+        setJobs(restored);
+        storageAvailable.current = true;
       })
       .catch(() => {
-        setNotice(
-          "Browser storage is unavailable. Your takes may not survive a refresh.",
-        );
-        setReady(true);
+        if (!disposed)
+          setStorageError(
+            "Browser storage is unavailable or could not be read. This session's takes will not survive a refresh. Existing saved data has not been overwritten.",
+          );
+      })
+      .finally(() => {
+        if (!disposed) setReady(true);
       });
+    return () => {
+      disposed = true;
+    };
   }, []);
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !storageAvailable.current) return;
+    let disposed = false;
     setSaving(true);
-    set("slate-jobs", jobs)
-      .then(() => setSaving(false))
-      .catch(() => {
-        setSaving(false);
-        setNotice(
-          "Could not save your takes. Check available browser storage.",
-        );
+    saveQueue.current = saveQueue.current
+      .then(async () => {
+        if (!storageAvailable.current) return;
+        try {
+          await withStorageTimeout(() => set("slate-jobs", jobs));
+        } catch {
+          storageAvailable.current = false;
+          setStorageError(
+            "Could not save your takes. This session's changes may be lost on refresh. Check browser storage before reloading.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!disposed) setSaving(false);
       });
+    return () => {
+      disposed = true;
+    };
   }, [jobs, ready]);
   useEffect(() => {
     const timer = setInterval(
@@ -219,6 +244,7 @@ export default function Home() {
     setRecipe((r) => ({ ...r, [key]: value }));
   }
   function generate(r = recipe, p = parent) {
+    if (!ready) return;
     if (!r.prompt.trim()) {
       promptRef.current?.focus();
       return;
@@ -246,14 +272,19 @@ export default function Home() {
     try {
       let blob: Blob | undefined;
       try {
-        blob = await get<Blob>("clip-" + j.id);
+        if (storageAvailable.current)
+          blob = await withStorageTimeout(
+            () => get<Blob>("clip-" + j.id),
+            1000,
+          );
       } catch {
         /* Export works without a cache. */
       }
       if (!blob) {
         blob = await record(j.recipe);
         try {
-          await set("clip-" + j.id, blob);
+          if (storageAvailable.current)
+            await withStorageTimeout(() => set("clip-" + j.id, blob), 1000);
         } catch {
           /* Quota errors must not discard a recorded take. */
         }
@@ -316,7 +347,10 @@ export default function Home() {
       </a>
       <header className="topbar">
         <a className="brand" href="/" aria-label="Slate home">
-          <span className="brandmark">s</span>slate
+          <span className="brandmark" aria-hidden="true">
+            <Film size={20} />
+          </span>
+          <span>slate</span>
           <span className="beta">WORKSPACE</span>
         </a>
         <nav aria-label="Workspace">
@@ -599,10 +633,21 @@ export default function Home() {
               ))}
             </div>
             <span className="small-muted">
-              {saving ? "Saving…" : "Saved on this device"} · {spent}/{total}{" "}
-              credits used
+              {!ready
+                ? "Opening storage…"
+                : storageError
+                  ? "Session only"
+                  : saving
+                    ? "Saving…"
+                    : "Saved on this device"}{" "}
+              · {spent}/{total} credits used
             </span>
           </div>
+          {storageError && (
+            <p className="storage-error" role="alert">
+              {storageError}
+            </p>
+          )}
           {!ready ? (
             <div className="empty">
               <Loader2 className="spin" />
@@ -634,7 +679,13 @@ export default function Home() {
                 onClick={() => {
                   setTab("all");
                   promptRef.current?.focus();
-                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  window.scrollTo({
+                    top: 0,
+                    behavior: matchMedia("(prefers-reduced-motion: reduce)")
+                      .matches
+                      ? "instant"
+                      : "smooth",
+                  });
                 }}
               >
                 Create your {jobs.length ? "next" : "first"} take{" "}
@@ -757,7 +808,7 @@ export default function Home() {
                         presets.find((p) => p.id === j.recipe.cameraPresetId)
                           ?.name
                       }
-                      {j.parentId ? " · Remix" : ""}
+                      {j.parentId ? " · Linked attempt" : ""}
                       {j.isKeeper ? " · Keeper" : ""}
                     </small>
                   </div>
@@ -867,93 +918,111 @@ export default function Home() {
               </button>
             </div>
           </>
-        ) : (
-          view && (
-            <div className="result-grid">
-              <div>
-                <Motion recipe={view.recipe} clock={clock} />
-                <div className="playback">
-                  <button
-                    className="outline"
-                    onClick={() => setPlaying(!playing)}
-                  >
-                    {playing ? <Pause size={16} /> : <Play size={16} />}{" "}
-                    {playing ? "Pause" : "Play"}
-                  </button>
-                  <span className="muted">
-                    {(clock / 1000).toFixed(1)} / {view.recipe.durationSec}s ·
-                    Mock render
-                  </span>
-                </div>
-              </div>
-              <div className="recipe-panel">
-                <span className="eyebrow">THE RECIPE</span>
-                <h3>{view.recipe.prompt}</h3>
-                <dl>
-                  <dt>Model</dt>
-                  <dd>
-                    {models.find((m) => m.id === view.recipe.modelId)?.name}
-                  </dd>
-                  <dt>Camera</dt>
-                  <dd>
-                    {
-                      presets.find((p) => p.id === view.recipe.cameraPresetId)
-                        ?.name
-                    }
-                  </dd>
-                  <dt>Format</dt>
-                  <dd>
-                    {view.recipe.durationSec}s · {view.recipe.aspect} ·{" "}
-                    {view.recipe.resolution}
-                  </dd>
-                  <dt>Cost</dt>
-                  <dd>{view.costCredits} credits</dd>
-                  {view.parentId && (
-                    <>
-                      <dt>Remixed from</dt>
-                      <dd>{view.parentId.slice(0, 8)}</dd>
-                    </>
-                  )}
-                </dl>
+        ) : view ? (
+          <div className="result-grid">
+            <div>
+              <Motion recipe={view.recipe} clock={clock} />
+              <div className="playback">
                 <button
-                  className="primary"
-                  disabled={exporting}
-                  onClick={() => remix(view)}
+                  className="outline"
+                  onClick={() => setPlaying(!playing)}
                 >
-                  <RotateCcw size={15} />
-                  Remix this take
+                  {playing ? <Pause size={16} /> : <Play size={16} />}{" "}
+                  {playing ? "Pause" : "Play"}
                 </button>
-                {canRecord ? (
-                  <button
-                    className="outline"
-                    disabled={exporting}
-                    onClick={() => download(view)}
-                  >
-                    {exporting ? (
-                      <Loader2 className="spin" size={15} />
-                    ) : (
-                      <Download size={15} />
-                    )}{" "}
-                    {exporting ? "Recording WebM…" : "Download WebM"}
-                  </button>
-                ) : (
-                  <p className="small-muted">
-                    WebM download is unavailable in this browser. Preview and
-                    remix still work.
-                  </p>
-                )}
-                {exporting && (
-                  <p className="small-muted">
-                    Keep this tab visible for {view.recipe.durationSec} seconds.
-                  </p>
-                )}
-                <p className="small-muted">
-                  A procedural landscape seeded by your prompt. This is a Mock
-                  render, not AI-generated footage.
-                </p>
+                <span className="muted">
+                  {(clock / 1000).toFixed(1)} / {view.recipe.durationSec}s ·
+                  Mock render
+                </span>
               </div>
             </div>
-          )
+            <div className="recipe-panel">
+              <span className="eyebrow">THE RECIPE</span>
+              <h3>{view.recipe.prompt}</h3>
+              <dl>
+                <dt>Model</dt>
+                <dd>
+                  {models.find((m) => m.id === view.recipe.modelId)?.name}
+                </dd>
+                <dt>Camera</dt>
+                <dd>
+                  {
+                    presets.find((p) => p.id === view.recipe.cameraPresetId)
+                      ?.name
+                  }
+                </dd>
+                <dt>Format</dt>
+                <dd>
+                  {view.recipe.durationSec}s · {view.recipe.aspect} ·{" "}
+                  {view.recipe.resolution}
+                </dd>
+                <dt>Cost</dt>
+                <dd>{view.costCredits} credits</dd>
+                {view.parentId && (
+                  <>
+                    <dt>Parent take / attempt</dt>
+                    <dd>{view.parentId.slice(0, 8)}</dd>
+                  </>
+                )}
+              </dl>
+              <button
+                className="primary"
+                disabled={exporting}
+                onClick={() => remix(view)}
+              >
+                <RotateCcw size={15} />
+                Remix this take
+              </button>
+              {canRecord ? (
+                <button
+                  className="outline"
+                  disabled={exporting}
+                  onClick={() => download(view)}
+                >
+                  {exporting ? (
+                    <Loader2 className="spin" size={15} />
+                  ) : (
+                    <Download size={15} />
+                  )}{" "}
+                  {exporting ? "Recording WebM…" : "Download WebM"}
+                </button>
+              ) : (
+                <p className="small-muted">
+                  WebM download is unavailable in this browser. Preview and
+                  remix still work.
+                </p>
+              )}
+              {exporting && (
+                <p className="small-muted">
+                  Keep this tab visible for {view.recipe.durationSec} seconds.
+                </p>
+              )}
+              <p className="small-muted">
+                A procedural landscape seeded by your prompt. This is a Mock
+                render, not AI-generated footage.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="empty">
+            <Film size={28} />
+            <h3>A take is waiting to happen.</h3>
+            <p>
+              Generate a clip, then open it from Your takes to preview, download
+              or remix it.
+            </p>
+            <button
+              className="outline"
+              onClick={() => {
+                setView(null);
+                setCompare(false);
+                dialogRef.current?.close();
+                promptRef.current?.focus();
+              }}
+            >
+              Back to Create
+            </button>
+          </div>
         )}
       </dialog>
     </>
