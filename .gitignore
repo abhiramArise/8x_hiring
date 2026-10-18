@@ -5,3 +5,7 @@ node_modules/
 
 *.tsbuildinfo
 work-server*.log
+
+work/
+__pycache__/
+.next-production/
