@@ -6,7 +6,8 @@
     "dev": "node --require ./scripts/windows-path.cjs node_modules/next/dist/bin/next dev --hostname 0.0.0.0",
     "build": "node --require ./scripts/windows-path.cjs node_modules/next/dist/bin/next build",
     "start": "node --require ./scripts/windows-path.cjs node_modules/next/dist/bin/next start --hostname 0.0.0.0",
-    "test": "node --experimental-strip-types --test tests/core.test.ts tests/recovery.test.mjs"
+    "test": "node --experimental-strip-types --test tests/core.test.ts tests/recovery.test.mjs",
+    "test:e2e": "playwright test --config tests/e2e/playwright.config.ts"
   },
   "dependencies": {
     "idb-keyval": "^6.2.2",
@@ -16,6 +17,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "20.17.6",
     "@types/react": "19.3.0",
