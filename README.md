@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. `npm test` runs six focused cost, job-state, retry and storage-recovery checks. `npm run build` creates the production build; `npm start` serves it. Development uses `.next/`; production uses `.next-production/`. `vercel.json` selects the production directory.
+Open http://localhost:3000. `npm test` runs seven focused cost, job-state, retry and storage-recovery checks. `npm run build` creates the production build; `npm start` serves it. Development uses `.next/`; production uses `.next-production/`. `vercel.json` selects the production directory.
 
 The Windows startup preload retries asynchronous `realpath` EPERM using the synchronous API for the same path. Other errors propagate; other operating systems are unchanged.
 
@@ -41,6 +41,8 @@ Reference decisions are in `recon/DECISIONS.md`. Reference signup and screenshot
 The prompt seeds landscape colors and terrain. Ten camera presets alter the motion. The mock does not semantically illustrate the prompt or use the reference image; the optional image is stored with the recipe.
 
 Cost is model rate × duration × resolution multiplier: Swift 2, Balanced 3, Cinematic 5 credits/second; 720p is 1× and 1080p is 2×. Defaults are Balanced, 4 seconds, 16:9, 720p: **12 credits**. Aspect ratio does not change cost. The Generate button shows the total and disables when it exceeds the available budget.
+
+Reset demo credits asks for confirmation and restores 240 credits without deleting takes or changing their original costs. Existing and running takes are exempt from the new demo budget; the reset is persisted with the take history.
 
 Completed jobs consume credits. Queued/generating jobs reserve them; failed and cancelled jobs release the reservation. Retry creates a new ID linked to the previous attempt through `parentId`. Remix loads the recipe and links the next generated take to its parent. Compare uses one playback clock; shorter clips loop independently. Keeper is persisted with the job.
 

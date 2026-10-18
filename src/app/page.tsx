@@ -125,6 +125,8 @@ export default function Home() {
   const file = useRef<HTMLInputElement>(null),
     promptRef = useRef<HTMLTextAreaElement>(null),
     dialogRef = useRef<HTMLDialogElement>(null),
+    dialogOpener = useRef<HTMLElement | null>(null),
+    closeResultButton = useRef<HTMLButtonElement>(null),
     storageAvailable = useRef(false),
     saveQueue = useRef<Promise<void>>(Promise.resolve());
   const total = 240,
@@ -235,10 +237,19 @@ export default function Home() {
     return () => cancelAnimationFrame(frame);
   }, [playing, view, compare]);
   useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
     if (view || compare) {
-      dialogRef.current?.showModal();
+      if (!dialog.open) {
+        dialogOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        dialog.showModal();
+        closeResultButton.current?.focus();
+      }
     } else {
-      dialogRef.current?.close();
+      dialog.close();
+      const opener = dialogOpener.current;
+      dialogOpener.current = null;
+      if (opener) (opener.isConnected ? opener : promptRef.current)?.focus();
       setPlaying(false);
       setClock(0);
     }
@@ -348,6 +359,7 @@ export default function Home() {
       : tab === "active"
         ? active
         : jobs;
+  const parentTake = view?.parentId ? jobs.find((job) => job.id === view.parentId) : undefined;
   return (
     <>
       <a href="#create" className="skip">
@@ -856,7 +868,8 @@ export default function Home() {
       <dialog
         aria-labelledby="result-title"
         ref={dialogRef}
-        onCancel={() => {
+        onCancel={(event) => {
+          event.preventDefault();
           setView(null);
           setCompare(false);
         }}
@@ -873,6 +886,7 @@ export default function Home() {
           </h2>
           <button
             className="icon-button"
+            ref={closeResultButton}
             aria-label="Close result"
             disabled={exporting}
             onClick={() => {
@@ -935,6 +949,8 @@ export default function Home() {
         ) : view ? (
           <div className="result-grid">
             <div>
+              {view.status === "done" ? (
+                <>
               <Motion recipe={view.recipe} clock={clock} />
               <div className="playback">
                 <button
@@ -949,6 +965,14 @@ export default function Home() {
                   Mock render
                 </span>
               </div>
+                </>
+              ) : (
+                <div className="empty">
+                  <AlertCircle size={28} />
+                  <h3>This attempt has no finished clip.</h3>
+                  <p>{view.error ?? `This take is ${view.status}.`}</p>
+                </div>
+              )}
             </div>
             <div className="recipe-panel">
               <span className="eyebrow">THE RECIPE</span>
@@ -974,8 +998,21 @@ export default function Home() {
                 <dd>{view.costCredits} credits</dd>
                 {view.parentId && (
                   <>
-                    <dt>Parent take / attempt</dt>
-                    <dd>{view.parentId.slice(0, 8)}</dd>
+                    <dt>Parent take</dt>
+                    <dd>
+                      {parentTake ? (
+                        <button className="parent-link" disabled={exporting}
+                          aria-label={`Open parent take: ${parentTake.recipe.prompt}`}
+                          onClick={() => {
+                            setView(parentTake);
+                            setClock(0);
+                            setPlaying(false);
+                            closeResultButton.current?.focus();
+                          }}>
+                          {parentTake.recipe.prompt.trim().slice(0, 80) || "Untitled take"}{parentTake.recipe.prompt.trim().length > 80 ? "…" : ""}
+                        </button>
+                      ) : <span className="muted">Parent take is no longer available on this device.</span>}
+                    </dd>
                   </>
                 )}
               </dl>
@@ -987,7 +1024,7 @@ export default function Home() {
                 <RotateCcw size={15} />
                 Remix this take
               </button>
-              {canRecord ? (
+              {view.status === "done" && (canRecord ? (
                 <button
                   className="outline"
                   disabled={exporting}
@@ -1005,7 +1042,7 @@ export default function Home() {
                   WebM download is unavailable in this browser. Preview and
                   remix still work.
                 </p>
-              )}
+              ))}
               {exporting && (
                 <p className="small-muted">
                   Keep this tab visible for {view.recipe.durationSec} seconds.

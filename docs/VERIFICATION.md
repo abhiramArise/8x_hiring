@@ -38,3 +38,15 @@
 ## Manual work remaining
 
 Deploy this revision. On a normal local browser verify private-window generation, storage disabled/unavailable, interrupted/retry path, unsupported recording, mixed-duration comparison and keyboard/reduced motion. Run Lighthouse accessibility on Create and fix any findings until >=90. Record the required intro and walkthrough. Earlier capture gaps cannot be reconstructed honestly.
+
+
+## Small UX revision
+
+- Added exact insufficient-credit reason and a visible rate × duration × resolution cost breakdown under Generate.
+- Added native confirmation before Reset demo credits. Existing take IDs are exempted from the restored 240-credit budget; jobs and exemption IDs are stored in one IndexedDB transaction. No takes or original cost values are deleted or rewritten.
+- Added a seventh focused test: reset keeps take data intact, restores availability, and charges new jobs against the restored budget. It failed before implementation and passes afterwards.
+- Parent take links now show an 80-character prompt snippet and open the parent recipe. Missing parents have an explanatory label; unfinished/failed parents have no fabricated preview or download.
+- Preset labels use 11px at every breakpoint, wrap, and switch to three columns at mobile width. Buttons have a 44px minimum width and 96px minimum height. 390px rendering remains unverified interactively.
+- Take dialog now has explicit fixed centering, auto margins, fit-content height and a viewport height cap. It still uses native showModal for modal focus containment; Escape updates state and closes it. The opener is remembered and focused on close, with a Create-field fallback if it disappears.
+- No interactive browser pass of reset confirmation, parent links, 390px layout, centering at 390/768/1440 widths, Escape, Tab containment or focus return is claimed. The earlier local browser connection was blocked, and these checks were not rerun against a new deployment.
+- Seven tests, TypeScript and the final production build pass. An additional in-process HTTP check was blocked with EACCES on its local connection; no new HTTP/browser pass is claimed. One earlier overlapping build failed with EPERM, followed by successful builds.

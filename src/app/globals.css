@@ -387,15 +387,19 @@ select {
   margin-top: 24px;
 }
 .preset {
+  min-width: 44px;
+  min-height: 96px;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 0;
   align-items: stretch;
-  font-size: 8px;
-  color: #aaaeb3;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #bec2c7;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
 }
 .preset-art {
   height: 64px;
@@ -795,6 +799,10 @@ canvas {
   margin-top: 12px;
 }
 dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  height: fit-content;
   background: #191c1e;
   color: var(--text);
   border: 1px solid #4b5147;
@@ -802,7 +810,7 @@ dialog {
   padding: 25px;
   max-width: 1100px;
   width: 90vw;
-  max-height: 90vh;
+  max-height: calc(100dvh - 32px);
   overflow: auto;
 }
 dialog::backdrop {
@@ -961,7 +969,7 @@ dialog::backdrop {
     gap: 20px 6px;
   }
   .preset {
-    font-size: 7px;
+    font-size: 11px;
   }
   .preset-art {
     height: 58px;
@@ -1043,6 +1051,7 @@ dialog::backdrop {
     padding: 22px 20px 16px;
   }
   .preset-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px 10px;
     margin-top: 18px;
   }
@@ -1050,7 +1059,7 @@ dialog::backdrop {
     height: 57px;
   }
   .preset {
-    font-size: 8px;
+    font-size: 11px;
   }
   .settings {
     grid-template-columns: repeat(2, 1fr);
@@ -1183,3 +1192,5 @@ dialog::backdrop {
 .credit-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 16px; margin-top: 8px; }
 .credit-tools .error { margin: 0; }
 .credit-tools button { min-height: 44px; text-decoration: underline; text-underline-offset: 3px; font-size: 12px; }
+
+.parent-link { padding: 6px 0; min-height: 44px; text-align: left; justify-content: flex-start; text-decoration: underline; text-underline-offset: 3px; color: var(--accent); overflow-wrap: anywhere; }
