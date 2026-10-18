@@ -30,12 +30,14 @@ Codex desktop assisted implementation, debugging, styling and focused tests. .ag
 
 ## Known issues / next
 
-Production build, browser checks and deployment evidence must be reported separately; do not infer them from implemented features. Lighthouse 90+ is not yet measured. Reference signup/screenshots, private-window deployed access, walkthrough and intro videos remain incomplete. IndexedDB is per-browser/device; unavailable storage shows an error. There is no server sync or real generation. The next priorities are browser verification, accessibility measurement, deployment, and the final walkthrough.
+The app is deployed and browser-verified; see docs/VERIFICATION.md for exact coverage. Lighthouse could not launch Chrome in this sandbox, so 90+ is not claimed. Random failed-job retry and a literal private-window check remain unverified. Reference signup/screenshots, walkthrough and intro videos remain incomplete. IndexedDB is per-browser/device; unavailable storage shows an error. There is no server sync or real generation.
 
 ## Deployment
 
-The intended host is Vercel. After signing into the intended account, run `npx vercel login`, then `npx vercel --prod` from this repo. No deployment is claimed until the returned live URL has been checked signed out. Use Node.js 22 or 24. Development uses .next/; production builds use .next-production/ so both can coexist.
+Live: https://slate-workspace.vercel.app/ (Vercel). The live app generated clips in browser QA, and a separate cookie-free HTTP request returned 200. A literal private-window check remains outstanding. To redeploy from this repo after authentication, run `npx vercel --prod`. Use Node.js 22 or 24. Development uses .next/; production builds use .next-production/ so both can coexist.
 
 ## Capture scope
 
 The passing canaries verify automatic logging for Codex sessions launched in this repo. This implementation chat is attached to a separate generated workspace, so repo-local hooks do not automatically capture its entire build history. Existing records are retained unchanged, and no missing historical transcript has been invented. This remains a submission limitation even though both canary tests pass.
+
+Vercel output configuration: vercel.json explicitly selects .next-production. The first cloud build compiled successfully but failed deployment because Vercel searched for .next; the project output-directory override was corrected to match next.config.mjs.

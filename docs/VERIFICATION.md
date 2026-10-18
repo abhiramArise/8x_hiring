@@ -1,32 +1,42 @@
 # Verification
 
-Capture: PASS. Two fresh sessions wrote exact prompt/reply pairs automatically. CAPTURE-TEST.md contains raw evidence. Logs are committed and are excluded from Git line-ending conversion by .gitattributes.
+Verified 2026-10-19 against https://slate-workspace.vercel.app/.
+
+Capture: PASS. Two fresh sessions wrote exact prompt/reply pairs automatically; CAPTURE-TEST.md contains raw evidence. Existing logs were not edited. Logs are tracked and excluded from Git line-ending conversion by .gitattributes.
 
 ## Product checks
 
-- Three focused cost/state tests: PASS.
-- Production dependency audit: PASS, zero reported vulnerabilities after the PostCSS override.
-- Independent code review: three P2 findings fixed (portrait/square canvas dimensions, optional export cache, named result dialog).
-- Final production build: PASS (`npm run build`); static Create route, 114 kB initial JavaScript.
-- Type check: PASS (`tsc --noEmit`).
-- Production HTTP check: PASS, HTTP 200 with expected Slate heading and Mock render label from .next-production output.
-- UI browser verification: blocked. The available in-app browser cannot connect to the sandbox's local development port. No interaction/mobile/Lighthouse pass is claimed.
-- Deployment: blocked on Vercel authentication. The browser reached the email-code flow, then denied access to Google sign-in. No authentication workaround was attempted.
+- Three focused cost/state tests passed in the implementation block; production build and type check passed.
+- Dependency audit: zero reported vulnerabilities after the PostCSS override.
+- Independent review: portrait/square canvas dimensions, optional export cache, and named result dialog fixes applied.
+- Vercel production deployment: live. First cloud build compiled but failed because Vercel expected .next. Project output was corrected to .next-production and the same source redeployed successfully. vercel.json records that setting for future deployments.
+- Cookie-free HTTP request: 200, expected Slate heading and Mock render label. A literal private-window check remains outstanding.
+- Live browser: three concurrent Swift jobs completed independently; refreshing during generation retained all three and their reservations.
+- Costs: default Balanced/4s/720p = 12; Cinematic/8s/1080p = 80; Swift/4s/720p = 8, all observed in the live UI.
+- Real WebM download: 1,012,553 bytes, EBML signature 1A-45-DF-A3, exported through the browser download flow.
+- Remix: recipe prefilled; changed camera to Orbit; generated result retained Remixed from 102b87f6.
+- Compare: two selected results opened together; Play in sync changed to Pause; Keeper selection persisted after reload and appeared in Keepers.
+- Budget: reservations deducted immediately, cancellation released 8 credits without a charge; retry queued a replacement. At 240/240 credits used, generation disabled with an insufficient-credit message.
+- Mobile Create: 390 x 844 viewport, document scrollWidth 375 <= innerWidth 390; controls and all ten presets visible without horizontal overflow.
+- Random failure UI: not observed in this run (30 successful results plus one cancelled original). Failure state logic is covered by focused tests, but failed-job retry is not claimed browser-verified.
+- Lighthouse: attempted against the live URL using headless Chrome; Chrome failed to expose its debugging port in this sandbox. No score is claimed.
 
 ## SPEC section 8
 
-1. Public signed-out generation: not yet deployed or verified.
-2. Exact live cost: implemented; model/duration/resolution cost checks pass, UI verification pending.
-3. Independent queue/failure/retry: implemented; state logic checks pass, UI verification pending.
-4. Refresh persistence: implemented using IndexedDB and stored job timestamps; browser verification pending.
-5. Remix recipe and parent link: implemented; browser verification pending.
-6. Compare and persistent Keeper: implemented; browser verification pending.
-7. Budget/refunds: implemented; reservation/refund logic check passes, UI verification pending.
-8. README: PASS; positioning, changes/cuts/reasons, mock provider, AI usage/capture limitations and known issues documented.
-9. Lighthouse >=90: not measured.
+1. Public signed-out generation: live browser generation and cookie-free HTTP pass; literal private-window test remains.
+2. Live costs: PASS for the combinations above, plus focused cost checks.
+3. Three independent jobs: PASS. Cancellation/retry: PASS. Simulated failure/retry: browser verification outstanding.
+4. Refresh persistence: PASS for in-flight queue and completed gallery.
+5. Remix recipe/parent link: PASS.
+6. Synchronized compare and persistent Keeper: PASS for equal-duration clips; mixed durations not manually verified.
+7. Budget: PASS for reservation, cancellation release and exhaustion; failed-job release covered by logic test only.
+8. README: PASS for positioning, kept/changed/cut, provider swap, AI capture scope and known limitations.
+9. Lighthouse >=90: NOT VERIFIED; browser launch failed.
 
-## Development and production output
+## Remaining submission work
 
-next.config.mjs isolates production artifacts in .next-production/ and development artifacts in .next/. This avoids a running dev server invalidating the production build. Both output directories are ignored.
+Run a private-window generation and Lighthouse accessibility audit on a normal local browser. Observe a random failed take and retry it. Record the intro/walkthrough. Reference signup/screenshots were not completed. Historical build-chat capture gaps are disclosed in README; no records were fabricated.
 
-Windows startup preloads scripts/windows-path.cjs: asynchronous realpath EPERM is retried with the same permitted synchronous API. Other errors propagate, and other operating systems are unchanged.
+## Build output
+
+Development artifacts use .next/; production uses .next-production/. Windows startup preloads scripts/windows-path.cjs, retrying asynchronous realpath EPERM through the permitted synchronous API. Other errors propagate and other operating systems are unchanged.
