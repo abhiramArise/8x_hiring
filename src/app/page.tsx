@@ -868,6 +868,28 @@ export default function Home() {
       <dialog
         aria-labelledby="result-title"
         ref={dialogRef}
+        tabIndex={-1}
+        onKeyDown={(event) => {
+          if (event.key !== "Tab") return;
+          const dialog = event.currentTarget;
+          const controls = Array.from(dialog.querySelectorAll<HTMLElement>(
+            'a[href], button, input, select, textarea, [tabindex]',
+          )).filter((element) =>
+            element.tabIndex >= 0 && !element.matches(":disabled") &&
+            element.getClientRects().length > 0 &&
+            getComputedStyle(element).visibility !== "hidden",
+          );
+          const first = controls[0], last = controls[controls.length - 1];
+          const active = document.activeElement;
+          if (!first) {
+            event.preventDefault();
+            dialog.focus();
+          } else if (!controls.includes(active as HTMLElement) ||
+            (event.shiftKey ? active === first : active === last)) {
+            event.preventDefault();
+            (event.shiftKey ? last : first).focus();
+          }
+        }}
         onCancel={(event) => {
           event.preventDefault();
           setView(null);
