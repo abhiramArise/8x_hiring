@@ -60,11 +60,22 @@ Codex desktop assisted implementation, debugging, styling and focused tests. `.a
 
 **Earlier build chats, and the audit and UX-fix Codex sessions after the canary sessions, ran outside this repository and were not captured by its hooks.** The existing canaries verify those sessions, not the complete build history. No missing transcript has been backfilled. During this audit, `.agent-logs/` and `.codex/` were read only and left unchanged. Raw quoted canary evidence in `CAPTURE-TEST.md` matched the actual files.
 
+## Owner-reported Lighthouse accessibility audits
+
+The owner ran automated Lighthouse accessibility audits on the live Create screen at https://slate-workspace.vercel.app/ on **19 Oct 2026**. These are **the owner's runs, not Codex's runs**.
+
+| Owner's run | Accessibility score | Reported result |
+| --- | --- | --- |
+| Before the contrast fix | 0.96 (96) | Color-contrast was the only failing audit: two elements measured 3.68:1 and 4.16:1 against the required 4.5:1. |
+| After commit `0247c78` was deployed | 1.0 (100) | No failing audits. |
+
+These automated Lighthouse accessibility results do not establish full accessibility compliance. Manual private-window and phone checks remain **UNVERIFIED**.
+
 ## Codex-executed live E2E results
 
-Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `82ba6c8` deployed. Run started **2026-10-18T20:51:01.105Z (UTC)** and took **189.028 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium**.
+Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `0247c78` deployed. Run started **2026-10-18T21:13:29.303Z (UTC; 19 Oct 2026 in Asia/Calcutta)** and took **197.329 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium 156.0.8078.4**.
 
-Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-focus-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
+Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-contrast-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
 
 | Executed scenario | Result |
 | --- | --- |
@@ -80,15 +91,15 @@ Executed command: `node node_modules/@playwright/test/cli.js test --config tests
 | 10 Blocked IndexedDB: Session only warning and creation | PASS |
 | 11 MediaRecorder unavailable: preview works, Download hidden | PASS |
 
-Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. **Lighthouse accessibility score and >=90 threshold remain UNVERIFIED**: the attempted Lighthouse command failed to launch Chrome and produced no report or score.
+Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. The owner-reported Lighthouse audits are recorded above. Codex's earlier Lighthouse attempt failed to launch Chrome and produced no report or score.
 
 ## Verification and known issues
 
-The app audit and UX fixes are deployed at https://slate-workspace.vercel.app/, deployed after commit `dffa071` (owner confirmation). Deployment confirmation does not establish browser acceptance results.
+The owner confirms that the app audit, UX fixes and contrast fix through commit `0247c78` are deployed at https://slate-workspace.vercel.app/. Deployment confirmation does not establish browser acceptance results.
 
 `docs/AUDIT.md` records the audit and `docs/VERIFICATION.md` records exact check coverage. Automated checks cover costs, independent state transitions, failure refunds, linked retry, storage rejection/timeout and interrupted recovery. These checks do not substitute for browser tests.
 
-No current manual browser results were supplied for the deployment after `dffa071`. Prior test records do not establish acceptance of this deployment.
+Apart from the owner-reported automated Lighthouse audits above, no current manual browser acceptance results were supplied. Codex-executed live E2E coverage is recorded separately above.
 
 | Current manual check | Status |
 | --- | --- |
@@ -105,7 +116,7 @@ No current manual browser results were supplied for the deployment after `dffa07
 | Unavailable-storage loading/error path | UNVERIFIED |
 | WebM download and unsupported-recording fallback | UNVERIFIED |
 | Keyboard navigation and reduced motion | UNVERIFIED |
-| Lighthouse accessibility run status and Create score | UNVERIFIED — Chrome launch failed; no report or score obtained |
+| Automated Lighthouse accessibility on live Create | Owner-reported PASS: 1.0 (100) after `0247c78`, 19 Oct 2026; see audit scope above |
 
 - Browser storage is per origin, browser and device. There is no account sync or multi-tab coordination. Budget is a local demonstration, not billing enforcement.
 - The reference image is not used by the mock, and mock output is a landscape rather than semantic video generation.

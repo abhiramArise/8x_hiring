@@ -2,13 +2,24 @@
 
 ## Deployment confirmation
 
-The owner confirms that the app audit and UX fixes are deployed at https://slate-workspace.vercel.app/, deployed after commit `dffa071`. This confirms deployment only, not acceptance results.
+The owner confirms that the app audit, UX fixes and contrast fix through commit `0247c78` are deployed at https://slate-workspace.vercel.app/. This confirms deployment only, not acceptance results.
+
+## Owner-reported Lighthouse accessibility audits
+
+The owner ran automated Lighthouse accessibility audits on the live Create screen at https://slate-workspace.vercel.app/ on **19 Oct 2026**. These are **the owner's runs, not Codex's runs**.
+
+| Owner's run | Accessibility score | Reported result |
+| --- | --- | --- |
+| Before the contrast fix | 0.96 (96) | Color-contrast was the only failing audit: two elements measured 3.68:1 and 4.16:1 against the required 4.5:1. |
+| After commit `0247c78` was deployed | 1.0 (100) | No failing audits. |
+
+These automated Lighthouse accessibility results do not establish full accessibility compliance. Manual private-window and phone checks remain **UNVERIFIED**.
 
 ## Codex-executed live E2E results
 
-Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `82ba6c8` deployed. Run started **2026-10-18T20:51:01.105Z (UTC)** and took **189.028 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium**.
+Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `0247c78` deployed. Run started **2026-10-18T21:13:29.303Z (UTC; 19 Oct 2026 in Asia/Calcutta)** and took **197.329 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium 156.0.8078.4**.
 
-Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-focus-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
+Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-contrast-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
 
 | Executed scenario | Result |
 | --- | --- |
@@ -24,7 +35,7 @@ Executed command: `node node_modules/@playwright/test/cli.js test --config tests
 | 10 Blocked IndexedDB: Session only warning and creation | PASS |
 | 11 MediaRecorder unavailable: preview works, Download hidden | PASS |
 
-Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. **Lighthouse accessibility score and >=90 threshold remain UNVERIFIED**: the attempted Lighthouse command failed to launch Chrome and produced no report or score.
+Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. The owner-reported Lighthouse audits are recorded above. Codex's earlier Lighthouse attempt failed to launch Chrome and produced no report or score.
 
 ## Current manual browser results
 
@@ -55,10 +66,10 @@ No completed manual browser result list was supplied. Bracketed example outcomes
 | Take-dialog Esc closure | UNVERIFIED |
 | Take-dialog focus containment and return | UNVERIFIED |
 | Keyboard navigation, visible focus and reduced motion | UNVERIFIED |
-| Lighthouse accessibility run status | UNVERIFIED — attempted run failed to launch Chrome |
-| Lighthouse accessibility score on Create | UNVERIFIED — no score supplied |
+| Automated Lighthouse accessibility run status | Owner-reported completed before and after contrast fix, 19 Oct 2026 |
+| Automated Lighthouse accessibility score on Create | Owner-reported 0.96 before; 1.0 after `0247c78`, no failing audits |
 
-No Lighthouse score or threshold pass is claimed. Previous automated or browser records do not establish owner-confirmed acceptance of the deployment after `dffa071`. That earlier documentation-only update did not rerun checks; the fresh Codex-executed live E2E run is recorded above.
+The owner-reported post-fix Lighthouse score meets the >=90 threshold; this is an automated audit result, not full accessibility compliance. Previous automated or browser records do not establish owner-confirmed acceptance of the deployment after `dffa071`. That earlier documentation-only update did not rerun checks; the fresh Codex-executed live E2E run is recorded above.
 
 ## SPEC section 8: owner-confirmed current acceptance
 
@@ -72,7 +83,7 @@ No Lighthouse score or threshold pass is claimed. Previous automated or browser 
 | 6. Compare and Keeper | UNVERIFIED |
 | 7. Budget charges/refunds | UNVERIFIED |
 | 8. README acceptance | UNVERIFIED — documentation updated; no owner acceptance result supplied |
-| 9. Lighthouse accessibility >=90 | UNVERIFIED — no score supplied |
+| 9. Lighthouse accessibility >=90 | Owner-reported PASS: 1.0 (100) on live Create after `0247c78`, 19 Oct 2026 |
 
 ## Capture and submission gaps
 
