@@ -32,7 +32,7 @@ The Windows startup preload retries asynchronous `realpath` EPERM using the sync
 | Cut MCP/API integrations | Integrations do not establish the core experience. |
 | Deferred batch, share links and advanced shortcuts | Prioritized the queue, recovery and reviewing takes. Ctrl/Cmd+Enter generation is available. |
 
-Reference decisions are in `recon/DECISIONS.md`. Reference signup and screenshots were not completed; no claim of full reference recon is made.
+Reference decisions are in `recon/DECISIONS.md`. Reference signup completion is unverified. The current recon screenshot status is unverified; no completion confirmation was supplied.
 
 ## How mock generation works
 
@@ -58,11 +58,11 @@ Implement `GenerationProvider` and replace the provider construction in `src/app
 
 Codex desktop assisted implementation, debugging, styling and focused tests. `.agent-logs/` contains the existing automatic prompt/response records and is tracked, not ignored. `CAPTURE-TEST.md` contains evidence for two independent canary sessions and the earlier failed attempts.
 
-**Earlier chats ran outside this repository and were not captured by its hooks.** The existing canaries verify those sessions, not the complete build history. No missing transcript has been backfilled. During this audit, `.agent-logs/` and `.codex/` were read only and left unchanged. Raw quoted canary evidence in `CAPTURE-TEST.md` matched the actual files.
+**Earlier build chats, and the audit and UX-fix Codex sessions after the canary sessions, ran outside this repository and were not captured by its hooks.** The existing canaries verify those sessions, not the complete build history. No missing transcript has been backfilled. During this audit, `.agent-logs/` and `.codex/` were read only and left unchanged. Raw quoted canary evidence in `CAPTURE-TEST.md` matched the actual files.
 
 ## Verification and known issues
 
-The public deployment is https://slate-workspace.vercel.app/. It was deployed from the earlier implementation; the audit fixes require a new deployment. Do not assume the current public app includes the latest local fixes.
+The app audit and UX fixes are deployed at https://slate-workspace.vercel.app/, deployed after commit `dffa071` (owner confirmation). Deployment confirmation does not establish browser acceptance results.
 
 `docs/AUDIT.md` records the audit and `docs/VERIFICATION.md` records exact check coverage. Automated checks cover costs, independent state transitions, failure refunds, linked retry, storage rejection/timeout and interrupted recovery. These checks do not substitute for browser tests.
 
@@ -72,7 +72,7 @@ The public deployment is https://slate-workspace.vercel.app/. It was deployed fr
 - Lighthouse could not launch Chrome in this sandbox; an accessibility score of 90 or higher is not claimed.
 - Browser storage is per origin, browser and device. There is no account sync or multi-tab coordination. Budget is a local demonstration, not billing enforcement.
 - The reference image is not used by the mock, and mock output is a landscape rather than semantic video generation.
-- Historical capture gaps remain. Reference screenshots, intro video and walkthrough are not complete.
+- Historical capture gaps remain. Recon screenshots, walkthrough video and intro video are each **UNVERIFIED**: no current completion confirmation or video links were supplied.
 
 ## What I would build next
 
