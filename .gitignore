@@ -9,3 +9,4 @@ work-server*.log
 work/
 __pycache__/
 .next-production/
+.vercel
