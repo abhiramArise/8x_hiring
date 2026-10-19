@@ -32,7 +32,7 @@ The Windows startup preload retries asynchronous `realpath` EPERM using the sync
 | Cut MCP/API integrations | Integrations do not establish the core experience. |
 | Deferred batch, share links and advanced shortcuts | Prioritized the queue, recovery and reviewing takes. Ctrl/Cmd+Enter generation is available. |
 
-Reference decisions are in `recon/DECISIONS.md`. Reference signup completion is unverified. The current recon screenshot status is unverified; no completion confirmation was supplied.
+See [recon/](recon/) for six owner-taken reference screenshots and [product decisions](recon/DECISIONS.md). The owner signed up, used Higgsfield and captured these views on 19 Oct 2026; the onboarding and signed-in Image screenshots support that recon.
 
 ## How mock generation works
 
@@ -122,7 +122,7 @@ Apart from the owner-reported automated Lighthouse audits above, no current manu
 
 - Browser storage is per origin, browser and device. There is no account sync or multi-tab coordination. Budget is a local demonstration, not billing enforcement.
 - The reference image is not used by the mock, and mock output is a landscape rather than semantic video generation.
-- Historical capture gaps remain. Recon screenshots, walkthrough video and intro video are each **UNVERIFIED**: no current completion confirmation or video links were supplied.
+- Historical capture gaps remain. Six owner-taken recon screenshots are included in [recon/](recon/). Walkthrough and intro videos remain **UNVERIFIED**: no completion confirmation or video links were supplied.
 
 ## What I would build next
 
