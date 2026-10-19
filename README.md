@@ -36,6 +36,8 @@ Reference decisions are in `recon/DECISIONS.md`. Reference signup completion is 
 
 ## How mock generation works
 
+See [Architecture](docs/ARCHITECTURE.md) for the implemented browser modules and take lifecycle.
+
 `GenerationProvider` in `src/lib/core.ts` defines `submit`, `getStatus` and `cancel`. The current interface is synchronous and returns the full local job. `MockProvider` creates independent jobs with an 8–25 second simulated delay, estimated progress and approximately 12% random failures. Reasons include overload, timeout and content filtering. No paid API, key or external media is required.
 
 The prompt seeds landscape colors and terrain. Ten camera presets alter the motion. The mock does not semantically illustrate the prompt or use the reference image; the optional image is stored with the recipe.
