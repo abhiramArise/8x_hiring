@@ -71,7 +71,7 @@ The owner ran automated Lighthouse accessibility audits on the live Create scree
 | Before the contrast fix | 0.96 (96) | Color-contrast was the only failing audit: two elements measured 3.68:1 and 4.16:1 against the required 4.5:1. |
 | After commit `0247c78` was deployed | 1.0 (100) | No failing audits. |
 
-These automated Lighthouse accessibility results do not establish full accessibility compliance. Manual private-window and phone checks remain **UNVERIFIED**.
+These automated Lighthouse accessibility results do not establish full accessibility compliance. The owner manually verified private-window generation and phone generation/take dialog on 19 Oct 2026; see the results below.
 
 ## Codex-executed live E2E results
 
@@ -93,7 +93,7 @@ Executed command: `node node_modules/playwright/cli.js test --config tests/e2e/p
 | 10 Blocked IndexedDB: Session only warning and creation | PASS |
 | 11 MediaRecorder unavailable: preview works, Download hidden | PASS |
 
-Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Manual private-window and mobile checks remain UNVERIFIED.** The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. The owner-reported Lighthouse audits are recorded above. Codex's earlier Lighthouse attempt failed to launch Chrome and produced no report or score.
+Each test used a fresh browser context with empty storage and no authentication. Math.random was stubbed for deterministic normal/failure paths. These are automated Chromium results, not manual private-window acceptance or physical mobile-device testing. **Owner-run private-window generation and phone generation/take dialog passed on 19 Oct 2026**, as recorded separately below. The automated 390px checks above were actually executed. Mixed-duration Compare, actual WebM file download, reduced motion and missing-parent handling are not established by these scenarios. The owner-reported Lighthouse audits are recorded above. Codex's earlier Lighthouse attempt failed to launch Chrome and produced no report or score.
 
 ## Verification and known issues
 
@@ -101,24 +101,27 @@ The owner confirms that the app audit, UX fixes, wording and mobile credit-label
 
 `docs/AUDIT.md` records the audit and `docs/VERIFICATION.md` records exact check coverage. Automated checks cover costs, independent state transitions, failure refunds, linked retry, storage rejection/timeout and interrupted recovery. These checks do not substitute for browser tests.
 
-Apart from the owner-reported automated Lighthouse audits above, no current manual browser acceptance results were supplied. Codex-executed live E2E coverage is recorded separately above.
+The owner reported these manual results on **19 Oct 2026**, in a private window on the live site and on a phone. These are the owner's checks, not Codex's; detailed scope and the separate automated-coverage column are in [docs/VERIFICATION.md](docs/VERIFICATION.md).
 
-| Current manual check | Status |
+| Owner-run manual check | Result |
 | --- | --- |
-| Signed-out/private-window generation | UNVERIFIED |
-| Exact costs, breakdown and insufficient-credit reason | UNVERIFIED |
-| Reset demo credits: confirmation, retained takes and persistence | UNVERIFIED |
-| Parent take navigation and missing-parent handling | UNVERIFIED |
-| Take dialog: Esc, focus return, focus containment and centering | UNVERIFIED |
-| Mobile Create at 390px | UNVERIFIED |
-| Independent jobs, failed-job reason/retry and interruption recovery | UNVERIFIED |
-| Queue/gallery refresh persistence and Remix | UNVERIFIED |
-| Compare synchronization and Keeper persistence | UNVERIFIED |
-| Budget charge/refund behavior | UNVERIFIED |
-| Unavailable-storage loading/error path | UNVERIFIED |
-| WebM download and unsupported-recording fallback | UNVERIFIED |
-| Keyboard navigation and reduced motion | UNVERIFIED |
-| Automated Lighthouse accessibility on live Create | Owner-reported PASS: 1.0 (100) after `0247c78`, 19 Oct 2026; see audit scope above |
+| Signed-out private-window generation | PASS |
+| Exact costs and insufficient-credit reason | PASS |
+| Reset demo credits: 240 restored, takes kept, persisted after refresh | PASS |
+| Parent take navigation | PASS |
+| Independent jobs, failed-job reason and Retry, interrupted-job recovery without charge | PASS |
+| Queue/gallery refresh persistence and Remix recipe/parent linking | PASS |
+| Compare synchronization and Keeper persistence | PASS |
+| Budget charge and refund | PASS |
+| Take dialog: Tab stays inside, Esc returns focus | PASS |
+| WebM download: downloaded file plays | PASS |
+| Phone: generation and take dialog | PASS |
+| Whole-page keyboard-only navigation | NOT RUN |
+| Reduced motion | NOT RUN |
+| Missing-parent handling | NOT RUN |
+| Retry when credits are insufficient | NOT RUN |
+
+Unavailable-storage behavior and unsupported-recording fallback remain **automated-only**: live E2E tests 10 and 11 passed. Codex's live suite also passed the automated 390px layout and dialog checks; this does not expand the owner's manual phone-check scope. Other manual checks not explicitly reported remain listed separately in docs/VERIFICATION.md.
 
 - Browser storage is per origin, browser and device. There is no account sync or multi-tab coordination. Budget is a local demonstration, not billing enforcement.
 - The reference image is not used by the mock, and mock output is a landscape rather than semantic video generation.
@@ -126,4 +129,4 @@ Apart from the owner-reported automated Lighthouse audits above, no current manu
 
 ## What I would build next
 
-First, finish private-window, unavailable-storage and accessibility verification on a normal browser. Then add multi-tab storage coordination and a real asynchronous provider behind a server route, once keys and spending approval are supplied. Cloud sync and sharing would follow validated demand for the core workflow.
+First, complete the remaining whole-page keyboard, reduced-motion, missing-parent and insufficient-credit Retry checks. Then add multi-tab storage coordination and a real asynchronous provider behind a server route, once keys and spending approval are supplied. Cloud sync and sharing would follow validated demand for the core workflow.

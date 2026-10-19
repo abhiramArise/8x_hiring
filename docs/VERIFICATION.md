@@ -63,16 +63,16 @@ The owner reported the following manual checks in a signed-out private window on
 | Retry button behavior when credits are insufficient | NOT RUN (owner) | Not covered; test 05 checks insufficient-credit Generate, not Retry |
 | Unavailable-storage warning and creation | Automated-only; no owner manual PASS claimed | Test 10: blocked IndexedDB, Session only warning and creation |
 | Unsupported-recording fallback | Automated-only; no owner manual PASS claimed | Test 11: MediaRecorder removed, preview works and Download hidden |
-| Default model, aspect ratio and resolution clarity | UNVERIFIED manually; not reported | Test 01 checks default values |
-| 1080p multiplier and cost-breakdown presentation | UNVERIFIED manually; not separately reported | Test 05 exercises 1080p cost; cost-function unit checks cover multiplier |
-| Reset confirmation step | UNVERIFIED manually; not separately reported | Test 05 covers dismissing and accepting confirmation |
-| Cancelled jobs | UNVERIFIED manually; not separately reported | Job-state unit check; no cancellation E2E scenario |
-| Mixed-duration Compare | UNVERIFIED manually; not separately reported | Not covered by test 07's equal-duration recipes |
-| Stalled-storage timeout UI | UNVERIFIED manually; not reported | Storage-timeout unit check; test 10 covers blocked, not stalled, IndexedDB |
-| Result empty state | UNVERIFIED manually; not reported | No dedicated result-empty-state E2E scenario |
-| Preset readability and touch targets at exactly 390px | UNVERIFIED manually; phone dimensions not supplied | Test 09: labels >=11px, targets >=44px and no horizontal overflow |
-| Take-dialog centering at mobile, tablet and desktop sizes | UNVERIFIED manually; not separately reported | Test 08 checks 390px, 768px and 1440px viewports |
-| Visible focus across the whole page | UNVERIFIED manually; not reported | No whole-page E2E coverage |
+| Default model, aspect ratio and resolution clarity | NOT REPORTED manually | Test 01 checks default values |
+| 1080p multiplier and cost-breakdown presentation | NOT REPORTED separately by owner | Test 05 exercises 1080p cost; cost-function unit checks cover multiplier |
+| Reset confirmation step | NOT REPORTED separately by owner | Test 05 covers dismissing and accepting confirmation |
+| Cancelled jobs | NOT REPORTED separately by owner | Job-state unit check; no cancellation E2E scenario |
+| Mixed-duration Compare | NOT REPORTED separately by owner | Not covered by test 07's equal-duration recipes |
+| Stalled-storage timeout UI | NOT REPORTED manually | Storage-timeout unit check; test 10 covers blocked, not stalled, IndexedDB |
+| Result empty state | NOT REPORTED manually | No dedicated result-empty-state E2E scenario |
+| Preset readability and touch targets at exactly 390px | NOT REPORTED at a specific width; owner phone generation/dialog passed | Test 09: labels >=11px, targets >=44px and no horizontal overflow |
+| Take-dialog centering at mobile, tablet and desktop sizes | NOT REPORTED separately by owner | Test 08 checks 390px, 768px and 1440px viewports |
+| Visible focus across the whole page | NOT REPORTED manually | No whole-page E2E coverage |
 
 The owner's automated Lighthouse audits are recorded above, separately from manual checks, and do not establish full accessibility compliance. No owner manual checks were rerun for this update; Codex ran the full live E2E suite recorded above. Unit tests, TypeScript, production build and Lighthouse were not rerun for this live-verification documentation update.
 
@@ -96,6 +96,6 @@ Earlier build chats, plus the audit and UX-fix Codex sessions after the canaries
 
 | Item | Current status |
 | --- | --- |
-| Recon screenshots | UNVERIFIED — no current completion confirmation supplied |
+| Recon screenshots | COMPLETE: six owner-taken screenshots from 19 Oct 2026 in [recon/](../recon/), visually inspected and committed with unchanged image bytes |
 | Walkthrough video | UNVERIFIED — no completion confirmation or link supplied |
 | Intro video | UNVERIFIED — no completion confirmation or link supplied |
