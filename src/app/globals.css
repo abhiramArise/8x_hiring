@@ -988,7 +988,7 @@ dialog::backdrop {
   .topbar {
     height: 70px;
     padding: 0 6%;
-    gap: 15px;
+    gap: 8px;
   }
   .brand {
     font-size: 25px;
@@ -1003,15 +1003,23 @@ dialog::backdrop {
   }
   .topbar nav {
     margin-left: auto;
-    gap: 18px;
+    gap: 10px;
     font-size: 11px;
   }
   .topbar nav a {
     font-size: 11px;
   }
+  .topbar a {
+    min-width: 44px;
+    min-height: 44px;
+  }
   .budget {
-    font-size: 10px;
+    font-size: 11px;
     gap: 5px;
+    white-space: nowrap;
+  }
+  .budget::after {
+    content: "cr";
   }
   .budget .muted {
     display: none;

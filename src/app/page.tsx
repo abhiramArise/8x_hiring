@@ -381,7 +381,7 @@ export default function Home() {
             My takes <span>{done.length}</span>
           </a>
         </nav>
-        <div className="budget">
+        <div className="budget" role="img" aria-label={`${remaining} credits left`}>
           <span className="budget-dot" />
           <span>
             {remaining} <span className="muted">credits left</span>
