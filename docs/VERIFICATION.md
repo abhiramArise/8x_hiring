@@ -2,7 +2,7 @@
 
 ## Deployment confirmation
 
-The owner confirms that the app audit, UX fixes and contrast fix through commit `0247c78` are deployed at https://slate-workspace.vercel.app/. This confirms deployment only, not acceptance results.
+The owner confirms that the app audit, UX fixes, wording and mobile credit-label fixes through commit `9cb33e5` are deployed at https://slate-workspace.vercel.app/. This confirms deployment only, not acceptance results.
 
 ## Owner-reported Lighthouse accessibility audits
 
@@ -17,9 +17,9 @@ These automated Lighthouse accessibility results do not establish full accessibi
 
 ## Codex-executed live E2E results
 
-Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `0247c78` deployed. Run started **2026-10-18T21:13:29.303Z (UTC; 19 Oct 2026 in Asia/Calcutta)** and took **197.329 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium 156.0.8078.4**.
+Codex ran the FULL, unchanged Playwright suite against **https://slate-workspace.vercel.app/** with `E2E_BASE_URL=https://slate-workspace.vercel.app/` after the owner reported commit `9cb33e5` deployed. Run started **2026-10-19T08:18:53.046Z (UTC; 19 Oct 2026 in Asia/Calcutta)** and took **184.590 seconds**. Result: **11 passed, 0 failed, 0 skipped, 0 flaky; exit code 0**. Runtime: **Playwright 1.64.1, Node v24.19.0, Chromium 156.0.8078.4**.
 
-Executed command: `node node_modules/@playwright/test/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-contrast-check` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
+Executed command: `node node_modules/playwright/cli.js test --config tests/e2e/playwright.config.ts`. Dependencies were run from the clean verification copy at `C:\Users\DELL\Documents\Codex\2026-10-18\codex-build-prompt-send-this-as\work\slate-credit-final` because dependency installation in the repo previously failed with EPERM. The spec, fixtures, config and package lock were verified byte-for-byte identical to the repo. No app or test assertions were changed. The target was the live URL, not a local server. Machine-readable evidence is in that copy's ignored `work/playwright/results.json`.
 
 | Executed scenario | Result |
 | --- | --- |
@@ -74,7 +74,7 @@ The owner reported the following manual checks in a signed-out private window on
 | Take-dialog centering at mobile, tablet and desktop sizes | UNVERIFIED manually; not separately reported | Test 08 checks 390px, 768px and 1440px viewports |
 | Visible focus across the whole page | UNVERIFIED manually; not reported | No whole-page E2E coverage |
 
-The owner's automated Lighthouse audits are recorded above, separately from manual checks, and do not establish full accessibility compliance. No new app tests or browser checks were run for this documentation-only update; automated results above retain their original execution details.
+The owner's automated Lighthouse audits are recorded above, separately from manual checks, and do not establish full accessibility compliance. No owner manual checks were rerun for this update; Codex ran the full live E2E suite recorded above. Unit tests, TypeScript, production build and Lighthouse were not rerun for this live-verification documentation update.
 
 ## SPEC section 8: owner-confirmed current acceptance
 
