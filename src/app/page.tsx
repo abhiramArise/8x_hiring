@@ -534,7 +534,7 @@ export default function Home() {
                   {recipe.resolution === "1080p"
                     ? "2× resolution rate"
                     : "1× resolution rate"}{" "}
-                  · charged on completion
+                  · Reserved while pending; charged on completion; released on failure or cancel
                 </small>
               </div>
               <button
@@ -834,7 +834,7 @@ export default function Home() {
                         presets.find((p) => p.id === j.recipe.cameraPresetId)
                           ?.name
                       }
-                      {j.parentId ? " · Linked attempt" : ""}
+                      {j.parentId ? " · Based on an earlier take" : ""}
                       {j.isKeeper ? " · Keeper" : ""}
                     </small>
                   </div>
